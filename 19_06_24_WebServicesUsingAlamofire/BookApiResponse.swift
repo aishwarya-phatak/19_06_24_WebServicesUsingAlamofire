@@ -5,6 +5,7 @@
 //  Created by Vishal Jagtap on 12/08/24.
 //
 
+//model class creation using way 1
 import Foundation
 struct BookApiResponse : Decodable{
     var error : String

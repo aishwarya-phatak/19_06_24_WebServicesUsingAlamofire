@@ -6,24 +6,38 @@
 //
 
 import UIKit
+import Alamofire
 
+//way 2
 class SecondViewController: UIViewController {
+    
+    var url : URL?
+    var urlRequest : URLRequest?
+    var bookApiResponse : BookAPIResponse1?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+       
+        url = URL(string: Constants.urlString)
+        urlRequest = URLRequest(url: url!)
+        urlRequest?.httpMethod = "GET"
+        
+        parseJSON(urlRequest: urlRequest!)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func parseJSON(urlRequest : URLRequest){
+        AF.request(urlRequest).response { res in
+//            print(res.result)
+            switch res.result{
+                case .success(let data):
+                self.bookApiResponse = try! JSONDecoder().decode(BookAPIResponse1.self, from: data!)
+                
+                for eachBook in self.bookApiResponse!.books{
+                    print(eachBook)
+                }
+                case .failure(let error):
+                    print(error)
+            }
+        }
     }
-    */
-
 }

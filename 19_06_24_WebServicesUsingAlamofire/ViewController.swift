@@ -8,6 +8,7 @@
 import UIKit
 import Alamofire
 
+//way 1
 class ViewController: UIViewController {
     
     var url : URL?
@@ -31,8 +32,8 @@ class ViewController: UIViewController {
                 case .success(let data):
                     let bookAPIResponse = try! JSONDecoder().decode(BookApiResponse.self, from: data!)
                 self.books = bookAPIResponse.books
-//                print(bookAPIResponse.books)
-//                print(self.books)
+                print(bookAPIResponse.books)
+                print(self.books)
                 
                 for eachBook in self.books{
                     print(eachBook)

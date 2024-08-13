@@ -7,16 +7,21 @@
 
 import Foundation
 
-//way 2
-struct BookAPIResponse1:Decodable{
-    var error : String
-    var total : String
+
+//model class creation using way 2
+struct Book1{
     var title : String
     var subtitle : String
     var isbn13 : String
     var price : String
     var image : String
     var url : String
+}
+
+struct BookAPIResponse1:Decodable{
+    var error : String
+    var total : String
+    var books : [Book1]
     
     enum APIResposneKeys:String,CodingKey {
         case error
@@ -39,24 +44,28 @@ struct BookAPIResponse1:Decodable{
         self.error = try container.decode(String.self, forKey: .error)
         self.total = try container.decode(String.self, forKey: .total)
         
-        var booksContainer = try container.nestedContainer(keyedBy: BookCodingKeys.self, forKey: .books)
+        var nestedContainer = try container.nestedUnkeyedContainer(forKey: .books)
         
-        while !booksContainer.codingPath.isEmpty{
+        var booksArray : [Book1] = []
+        
+        while !nestedContainer.isAtEnd{
+            let booksContainer = try nestedContainer.nestedContainer(keyedBy: BookCodingKeys.self)
+            let title = try booksContainer.decode(String.self, forKey: .title)
+            let subtitle = try booksContainer.decode(String.self, forKey: .subtitle)
+            let isbnNumber = try booksContainer.decode(String.self, forKey: .isbnNumber)
+            let price = try booksContainer.decode(String.self, forKey: .price)
+            let image = try booksContainer.decode(String.self, forKey: .image)
+            let url = try booksContainer.decode(String.self, forKey: .url)
             
-            self.title = try booksContainer.decode(String.self, forKey: .title)
-            self.subtitle = try booksContainer.decode(String.self, forKey: .subtitle)
-            self.isbn13 = try booksContainer.decode(String.self, forKey: .isbnNumber)
-            self.price = try booksContainer.decode(String.self, forKey: .price)
-            self.image = try booksContainer.decode(String.self, forKey: .image)
-            self.url = try booksContainer.decode(String.self, forKey: .url)
-                     Book(title:self.title,
-                          subtitle: self.subtitle,
-                          isbn13: self.isbn13,
-                          price: self.price,
-                          image: self.image,
-                          url: self.url)
+            let book1 = Book1(title: title,
+                      subtitle: subtitle,
+                      isbn13: isbnNumber,
+                      price: price,
+                      image: image,
+                      url: url)
             
+            booksArray.append(book1)
         }
-       
+        self.books = booksArray
     }
 }
